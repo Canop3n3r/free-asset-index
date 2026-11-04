@@ -8,9 +8,10 @@ export function dedup(items) {
     if (!prev) { m.set(k, i); continue; }
     if (prev.id === i.id) continue;
     const [keep, drop] = richness(i) > richness(prev) ? [i, prev] : [prev, i];
-    m.set(k, { ...keep, alsoAt: [...new Set([...(keep.alsoAt || []), drop.url, ...(drop.alsoAt || [])])] });
+    const all = [...new Set([...(keep.allAlso || keep.alsoAt || []), drop.url, ...(drop.allAlso || drop.alsoAt || [])])];
+    m.set(k, { ...keep, allAlso: all });
   }
-  return [...m.values()];
+  return [...m.values()].map(({ allAlso, ...i }) => (allAlso ? { ...i, alsoAt: allAlso.slice(0, 5), alsoAtCount: allAlso.length } : i));
 }
 export function qualityScore(i) {
   let s = 20;

@@ -35,3 +35,7 @@ test('Quaternius formats from tag divs and meta', () => {
   assert.deepEqual(parseQuaterniusFormats('<meta name="description" content="All in .FBX, .OBJ and .Blend formats"/>'), ['FBX', 'OBJ', 'BLEND']);
   assert.deepEqual(parseQuaterniusFormats('<meta name="description" content="nothing"/>'), []);
 });
+test('audio items only get the audio category (no space/ui/pixel leakage)', () => {
+  const a = c({ title: 'Rocket launch 8-bit UI click', kind: 'audio', tags: ['space', 'button'] });
+  assert.deepEqual(a.categories, ['audio']); assert.deepEqual(a.styles, []); assert.equal(a.audio, 'sfx');
+});
