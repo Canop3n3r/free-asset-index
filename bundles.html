@@ -1,0 +1,21 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Bundles — Free Asset Index</title><link rel="stylesheet" href="style.css"></head><body>
+<header><a href="./" class="logo">Free Asset Index</a><span class="tag">Curated bundles. Links only; each asset stays on its creator's site.</span><nav><a href="./">Search</a> · <a href="#">Bundles</a> · <a href="api.html">API</a></nav></header>
+<main id="main"><p>Loading bundles…</p></main>
+<script type="module">
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const main = document.getElementById('main');
+const idx = await (await fetch('api/bundles.json')).json();
+async function show() {
+  const slug = location.hash.slice(1);
+  if (!slug) {
+    main.innerHTML = `<h2>Bundles</h2><div class="grid">${idx.map(b => `<article class="card"><h3><a href="#${esc(b.slug)}">${esc(b.title)}</a></h3><p>${esc(b.description)}</p><p class="meta">${b.count} assets · ${b.creators} creators · ${esc(b.licenses.join(', '))}</p><p class="meta"><a href="api/bundles/${esc(b.slug)}.json">JSON manifest</a></p></article>`).join('')}</div>`;
+    return;
+  }
+  const b = await (await fetch(`api/bundles/${encodeURIComponent(slug)}.json`)).json();
+  main.innerHTML = `<p><a href="#">← All bundles</a></p><h2>${esc(b.title)}</h2><p>${esc(b.description)} ${b.count} assets. <a href="api/bundles/${esc(b.slug)}.json">JSON manifest</a></p>
+  <p><button id="copyall">Copy all credits</button> <span class="note">${esc(b.note)}</span></p><textarea id="credits" readonly style="height:120px">${esc(b.attribution)}</textarea>
+  <div class="grid">${b.items.slice(0, 300).map(i => `<article class="card"><a href="${esc(i.url)}" target="_blank" rel="noopener">${i.thumbnail ? `<img loading="lazy" src="${esc(i.thumbnail)}" alt="">` : `<div class="noimg">${esc(i.source)}</div>`}<h3>${esc(i.title)}</h3></a><p>by ${esc(i.creator)} · <a class="lic" href="${esc(i.licenseUrl)}" target="_blank" rel="noopener">${esc(i.license)}</a></p></article>`).join('')}</div>${b.count > 300 ? `<p class="note">Showing 300 of ${b.count}. The JSON manifest has them all.</p>` : ''}`;
+  document.getElementById('copyall').onclick = e => { const t = document.getElementById('credits'); t.select(); navigator.clipboard?.writeText(t.value); e.target.textContent = 'Copied!'; };
+}
+addEventListener('hashchange', show); show();
+</script></body></html>
