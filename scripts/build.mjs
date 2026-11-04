@@ -2,6 +2,7 @@
 import { readFile, writeFile, mkdir, cp, rm, readdir } from 'node:fs/promises';
 import { previewFor } from '../src/previews.mjs';
 import { slimItem } from '../src/slim.mjs';
+import { engineManifest, ENGINES } from '../src/engines.mjs';
 import { CATEGORIES } from '../src/classify.mjs';
 import { creatorStats } from '../src/lib.mjs';
 import { classify } from '../src/classify.mjs';
@@ -30,7 +31,7 @@ for (const l of ['CC0', 'CC-BY']) await w(`api/license/${l.toLowerCase()}.json`,
 for (const f of ['GLB', 'GLTF', 'FBX', 'OBJ', 'BLEND', 'PNG', 'HDR']) await w(`api/format/${f.toLowerCase()}.json`, items.filter(i => i.formats.includes(f) || (f === 'GLB' && i.formats.includes('GLTF'))));
 const bundles = buildBundles(items);
 await w('api/bundles.json', bundleIndex(bundles));
-for (const b of bundles) await w(`api/bundles/${b.slug}.json`, b);
+for (const b of bundles) { await w(`api/bundles/${b.slug}.json`, b); for (const e of ENGINES) await w(`api/bundles/${b.slug}.${e}.json`, engineManifest(b, e)); }
 console.log('bundles:', bundles.map(b => `${b.slug}=${b.count}`).join(' '));
 await writeFile(new URL('.nojekyll', out), '');
 console.log(`built ${items.length} items -> ${out.pathname}`);

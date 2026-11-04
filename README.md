@@ -43,3 +43,12 @@ Views of creator pages and outbound clicks are sent anonymously, with no IPs or 
 `src/classify.mjs` tags every item at build time using rules over titles, tags and source metadata. It adds `categories` (vehicles, space, nature, buildings, characters, props, textures, hdris, audio, ui) and `styles` (low-poly, realistic, psx, pixel, stylized). `src/bundles.mjs` defines the bundles. Bundles are rebuilt on every `npm run build` and `scripts/deploy-pages.sh` run, so they grow as crawls add items. Bundles with fewer than 3 items are skipped.
 - Site: `bundles.html` (includes a "Copy all credits" button)
 - API: `api/bundles.json` and `api/bundles/<slug>.json` (each item links to its source, plus a combined `attribution` block). The Docker server serves the same data at `/api/bundles` and `/api/bundles/<slug>`, and supports `/api/search?category=`.
+
+## For AI agents and engines
+- `llms.txt` and `openapi.json` are published at the site root.
+- Engine manifests: `api/bundles/{slug}.{godot|unity|threejs}.json` give the target path, preferred format, import hint and three.js loader for each asset. Download stays manual, from the source page.
+- `api/search-index.json` is a compact index for fast client-side search. `sort=quality` orders results by the 0-100 `quality` score.
+
+## Roadmap / sources needing keys
+- Sketchfab (API token required for its search API; CC filters available), Freesound (API key required), Smithsonian Open Access (api.data.gov key), NASA 3D Resources (GitHub repo, no key; check per-model usage terms), itch.io (no public asset API; robots disallows /search).
+- 3D previews with `<model-viewer>`: not enabled yet, because no current source clearly permits embedding its model files directly.

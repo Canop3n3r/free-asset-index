@@ -27,6 +27,7 @@ test('server: /api/search returns filtered results with license; /api/track coun
   const sk = await (await fetch(`${b2}/api/bundles/space-kit.json`)).json();
   assert.equal(sk.count, 3); assert.match(sk.attribution, /Spaceship 0/);
   assert.equal((await fetch(`${b2}/api/bundles/nope`)).status, 404);
+  assert.equal((await (await fetch(`${b2}/api/bundles/space-kit.godot.json`)).json()).engine, 'godot');
   assert.equal((await (await fetch(`${b2}/api/search?category=space`)).json()).total, 3);
   s2.close();
   srv.close();
