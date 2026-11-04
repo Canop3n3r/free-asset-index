@@ -39,6 +39,7 @@ export function classify(item) {
   const objText = item.source === 'polyhaven' ? item.title : text;
   const OBJ = new Set(['vehicles', 'space', 'characters', 'props', 'ui']);
   if (item.kind === 'hdri') return { categories: ['hdris'], styles: item.style === 'realistic' || item.source === 'polyhaven' ? ['realistic'] : [] };
+  if (item.kind === 'audio') { const t = `${item.title} ${(item.tags || []).join(' ')}`; return { categories: ['audio'], styles: [], audio: AUDIO.music.test(t) ? 'music' : AUDIO.ambience.test(t) ? 'ambience' : 'sfx' }; }
   const surface = item.kind === 'texture';
   const categories = new Set(Object.keys(CATEGORY_RULES).filter(c => CATEGORY_RULES[c].test(OBJ.has(c) ? objText : text) && !(NEGATIVE[c] && NEGATIVE[c].test(OBJ.has(c) ? objText : text)) && (!surface || SURFACE_OK.has(c))));
   let audio;

@@ -2,7 +2,8 @@ import { search, creatorStats, attribution } from './lib.mjs';
 import { track, localStats, globalStats } from './track.js';
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-const FIELDS = ['q', 'category', 'kind', 'style', 'format', 'license', 'source', 'sort'];
+const FIELDS = ['q', 'category', 'kind', 'style', 'format', 'license', 'source', 'maxTriangles', 'maxFileSize', 'maxTextureRes', 'sort'];
+const mb = b => (b == null ? '' : b < 1048576 ? `${Math.max(1, Math.round(b / 1024))} KB` : `${(b / 1048576).toFixed(1)} MB`);
 const PAGE = 60;
 const PLACEHOLDER = 'data:image/svg+xml,' + encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 10 10"><rect width="10" height="10" fill="#0c0e11"/><path d="M2 7l2-3 2 2 1-1 1 2z" fill="#334"/></svg>');
 let items = [], byId = new Map(), shown = PAGE, lastResults = [];
@@ -28,7 +29,10 @@ function quickView(i) {
   <div class="qv-img">${img(i, true)}</div><div class="qv-info"><h2>${esc(i.title)}</h2>
   <p>by <a href="#/creator/${esc(i.creatorSlug)}">${esc(i.creator)}</a> on ${esc(i.source)}</p>
   <p><a class="lic" href="${esc(i.licenseUrl)}" target="_blank" rel="noopener">${esc(i.license)}</a> · ${esc(i.kind || '')} ${(i.formats || []).map(f => `<span class="fmt">${esc(f)}</span>`).join('')}</p>
-  <p class="meta">${esc([...(i.categories || []), ...(i.styles || [])].join(' · '))}</p>
+  <p class="meta">${esc([...(i.categories || []), ...(i.styles || []), i.audio].filter(Boolean).join(' · '))}</p>
+  <p class="meta">${[i.triangles != null && `${i.triangles.toLocaleString()} tris`, i.textureRes && `${i.textureRes >= 1024 ? i.textureRes / 1024 + 'K' : i.textureRes + 'px'} textures`, i.fileSize != null && `download ${mb(i.fileSize)}`, i.duration && `${i.duration.toFixed(1)} s`, i.maps?.length && `maps: ${i.maps.join(', ')}`].filter(Boolean).map(esc).join(' · ')}</p>
+  ${i.preview ? `<audio controls preload="none" src="${esc(i.preview)}"></audio>` : ''}
+  ${i.downloadUrl ? `<p class="meta"><a href="${esc(i.downloadUrl)}" data-out="${esc(i.creatorSlug)}" data-id="${esc(i.id)}" rel="noopener">Direct download${i.fileSize ? ` (${mb(i.fileSize)})` : ''} ↓</a>, served by ${esc(i.source)}</p>` : ''}
   <a class="btn" href="${esc(i.url)}" target="_blank" rel="noopener" data-out="${esc(i.creatorSlug)}" data-id="${esc(i.id)}">Get it on ${esc(i.source)} ↗</a>
   ${(i.alsoAt || []).map(u => `<p class="meta">Also at <a href="${esc(u)}" target="_blank" rel="noopener">${esc(new URL(u).hostname)}</a></p>`).join('')}
   <label class="meta">Credit line</label><textarea readonly>${esc(attribution(i))}</textarea><button data-copy>Copy credit</button></div></div>`;

@@ -36,3 +36,8 @@ test('qualityScore 0..100 rewards preview, formats, tags, attribution-free licen
   const hi = qualityScore(mk({ sourceId: 'b', title: 'X', thumbnail: 'https://x.y/t.png', formats: ['GLB', 'FBX'], tags: ['a', 'b', 'c', 'd'] }));
   assert.ok(lo >= 0 && hi <= 100 && hi > lo);
 });
+test('dedup caps alsoAt at 5 and records the total', () => {
+  const many = Array.from({ length: 9 }, (_, n) => mk({ sourceId: 'm' + n, title: 'Pongo abelii', creator: 'NMNH' }));
+  const [one] = dedup(many);
+  assert.equal(one.alsoAt.length, 5); assert.equal(one.alsoAtCount, 8);
+});
