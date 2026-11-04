@@ -2,7 +2,7 @@
 <header><a href="./" class="logo">Free Asset Index</a><span class="tag">Public JSON API, free, no key</span></header><main>
 <h2>Static JSON (GitHub Pages)</h2><p>Every result includes <code>license</code>, <code>licenseUrl</code>, <code>creator</code>, <code>url</code> (source page) and a ready-made <code>attribution</code> line.</p>
 <ul><li><a href="api/items.json">api/items.json</a>: the full index</li><li><a href="api/creators.json">api/creators.json</a>: creators with asset counts</li>
-<li><a href="api/meta.json">api/meta.json</a>: counts per source and license, build time</li>
+<li><a href="api/bundles.json">api/bundles.json</a>: curated bundles index; <code>api/bundles/{slug}.json</code> lists items plus a combined <code>attribution</code> block. Items also carry <code>categories</code> and <code>styles</code> tags.</li><li><a href="api/meta.json">api/meta.json</a>: counts per source and license, build time</li>
 <li><code>api/source/{polyhaven|quaternius|kenney|opengameart}.json</code>, <code>api/license/{cc0|cc-by}.json</code>, <code>api/format/{glb|gltf|fbx|obj|blend|png|hdr}.json</code></li></ul>
 <p>Static hosting cannot run queries. Download one of the files above and filter it, or use <code>src/lib.mjs</code> <code>search()</code>.</p>
 <h2>Search endpoint (Docker server)</h2><pre>GET /api/search?q=chair&amp;format=GLB&amp;license=CC0&amp;style=realistic&amp;kind=3d&amp;source=polyhaven&amp;creator=slug&amp;limit=50&amp;offset=0

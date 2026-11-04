@@ -37,3 +37,8 @@ Views of creator pages and outbound clicks are sent anonymously, with no IPs or 
 
 ## Deploy
 `npm run build` writes `dist/`, which is pushed to the `gh-pages` branch.
+
+## Tags and curated bundles
+`src/classify.mjs` tags every item at build time using rules over titles, tags and source metadata. It adds `categories` (vehicles, space, nature, buildings, characters, props, textures, hdris, audio, ui) and `styles` (low-poly, realistic, psx, pixel, stylized). `src/bundles.mjs` defines the bundles. Bundles are rebuilt on every `npm run build` and `scripts/deploy-pages.sh` run, so they grow as crawls add items. Bundles with fewer than 3 items are skipped.
+- Site: `bundles.html` (includes a "Copy all credits" button)
+- API: `api/bundles.json` and `api/bundles/<slug>.json` (each item links to its source, plus a combined `attribution` block). The Docker server serves the same data at `/api/bundles` and `/api/bundles/<slug>`, and supports `/api/search?category=`.

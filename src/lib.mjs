@@ -46,7 +46,8 @@ export function search(items, p = {}) {
   const out = items.filter(i =>
     (!fmt || fmts.some(f => i.formats.includes(f))) &&
     (!lic || i.license.toUpperCase().startsWith(lic)) &&
-    (!p.style || i.style === p.style) &&
+    (!p.style || i.style === p.style || (i.styles || []).includes(p.style)) &&
+    (!p.category || (i.categories || []).includes(p.category)) &&
     (!p.kind || i.kind === p.kind) &&
     (!p.source || i.source === p.source) &&
     (!p.creator || i.creatorSlug === p.creator) &&
