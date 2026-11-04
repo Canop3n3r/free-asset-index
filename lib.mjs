@@ -53,6 +53,8 @@ export function search(items, p = {}) {
     (!p.source || i.source === p.source) &&
     (!p.creator || i.creatorSlug === p.creator) &&
     q.every(w => (i.title + ' ' + i.creator + ' ' + i.tags.join(' ')).toLowerCase().includes(w)));
+  if (p.sort === 'quality') out.sort((a, b) => (b.quality || 0) - (a.quality || 0));
+  else if (p.sort === 'title') out.sort((a, b) => a.title.localeCompare(b.title));
   const limit = Math.min(Math.max(parseInt(p.limit) || 50, 1), 200);
   const offset = Math.max(parseInt(p.offset) || 0, 0);
   return { total: out.length, offset, limit, results: out.slice(offset, offset + limit) };

@@ -1,15 +1,19 @@
 <!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Free Asset Index — free CC0 / CC-BY game assets</title><link rel="stylesheet" href="style.css"></head><body>
+<title>Free Asset Index: free CC0 / CC-BY game assets</title><meta name="description" content="Search thousands of free CC0 and CC-BY 3D models, textures, HDRIs and 2D sprites. Links to the original creators, with a credit line for every asset.">
+<link rel="stylesheet" href="style.css"></head><body>
 <header><a href="./" class="logo">Free Asset Index</a><span class="tag">Free 3D &amp; 2D game assets. We only link; creators keep ownership and get the traffic.</span>
-<nav><a href="bundles.html">Bundles</a> · <a href="#/creators">Creators</a> · <a href="api.html">API</a> · <a href="https://github.com/Canop3n3r/free-asset-index">GitHub</a></nav></header>
+<nav><a href="bundles.html">Bundles</a> <a href="#/creators">Creators</a> <a href="api.html">API</a> <a href="https://github.com/Canop3n3r/free-asset-index">GitHub</a></nav></header>
 <section id="filters">
-<input id="q" type="search" placeholder="Search: chair, knight, tree…" autofocus>
-<select id="kind"><option value="">Any type</option><option value="3d">3D</option><option value="2d">2D</option><option value="texture">Texture</option><option value="hdri">HDRI</option></select>
-<select id="style"><option value="">Any style</option><option>realistic</option><option>low-poly</option><option>pixel</option><option>cartoon</option><option>flat</option></select>
-<select id="format"><option value="">Any format</option><option>GLB</option><option>GLTF</option><option>FBX</option><option>OBJ</option><option>BLEND</option><option>PNG</option><option>HDR</option></select>
-<select id="license"><option value="">Any license</option><option value="CC0">CC0</option><option value="CC-BY">CC-BY</option></select>
-<select id="source"><option value="">Any source</option><option value="polyhaven">Poly Haven</option><option value="quaternius">Quaternius</option><option value="kenney">Kenney</option><option value="opengameart">OpenGameArt</option><option value="ambientcg">ambientCG</option></select>
+<input id="q" type="search" placeholder="Search: chair, knight, tree, brick…" autofocus aria-label="Search">
+<select id="category" aria-label="Category"><option value="">Any category</option><option>vehicles</option><option>space</option><option>nature</option><option>buildings</option><option>characters</option><option>props</option><option>textures</option><option>hdris</option><option>ui</option></select>
+<select id="kind" aria-label="Type"><option value="">Any type</option><option value="3d">3D</option><option value="2d">2D</option><option value="texture">Texture</option><option value="hdri">HDRI</option></select>
+<select id="style" aria-label="Style"><option value="">Any style</option><option>realistic</option><option>low-poly</option><option>pixel</option><option>stylized</option><option>psx</option></select>
+<select id="format" aria-label="Format"><option value="">Any format</option><option>GLB</option><option>FBX</option><option>OBJ</option><option>BLEND</option><option>PNG</option><option>HDR</option></select>
+<select id="license" aria-label="License"><option value="">Any license</option><option value="CC0">CC0</option><option value="CC-BY">CC-BY</option></select>
+<select id="source" aria-label="Source"><option value="">Any source</option><option value="polyhaven">Poly Haven</option><option value="ambientcg">ambientCG</option><option value="quaternius">Quaternius</option><option value="kenney">Kenney</option><option value="opengameart">OpenGameArt</option></select>
+<select id="sort" aria-label="Sort"><option value="quality">Best first</option><option value="">Index order</option><option value="title">A–Z</option></select>
 </section>
-<main id="main"><p>Loading index…</p></main>
+<main id="main"><p class="note">Loading index…</p></main>
+<dialog id="qv"></dialog>
 <footer>Each asset stays on its creator's site. Always check the license on the source page before use. <span id="count"></span></footer>
 <script type="module" src="app.js"></script></body></html>
