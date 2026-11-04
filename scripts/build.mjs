@@ -1,0 +1,19 @@
+// Builds the static site + static JSON API into dist/ (the folder GitHub Pages serves).
+import { readFile, writeFile, mkdir, cp, rm } from 'node:fs/promises';
+import { creatorStats } from '../src/lib.mjs';
+const root = new URL('../', import.meta.url);
+const out = new URL(process.env.OUT_DIR || 'dist/', root);
+const items = JSON.parse(await readFile(new URL('data/items.json', root)));
+await rm(out, { recursive: true, force: true });
+await cp(new URL('web/', root), out, { recursive: true });
+await cp(new URL('src/lib.mjs', root), new URL('lib.mjs', out));
+const w = async (p, d) => { const u = new URL(p, out); await mkdir(new URL('./', u), { recursive: true }); await writeFile(u, JSON.stringify(d)); };
+await w('api/items.json', items);
+await w('api/creators.json', creatorStats(items));
+const count = k => items.reduce((m, i) => (m[i[k]] = (m[i[k]] || 0) + 1, m), {});
+await w('api/meta.json', { total: items.length, bySource: count('source'), byLicense: count('license'), builtAt: new Date().toISOString(), note: 'Link-only index. Check the license on each source page.' });
+for (const s of ['polyhaven', 'quaternius', 'kenney', 'opengameart']) await w(`api/source/${s}.json`, items.filter(i => i.source === s));
+for (const l of ['CC0', 'CC-BY']) await w(`api/license/${l.toLowerCase()}.json`, items.filter(i => i.license.startsWith(l)));
+for (const f of ['GLB', 'GLTF', 'FBX', 'OBJ', 'BLEND', 'PNG', 'HDR']) await w(`api/format/${f.toLowerCase()}.json`, items.filter(i => i.formats.includes(f)));
+await writeFile(new URL('.nojekyll', out), '');
+console.log(`built ${items.length} items -> ${out.pathname}`);
