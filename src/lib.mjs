@@ -3,6 +3,7 @@ export const LICENSES = {
   'CC0': { name: 'CC0 1.0 (Public Domain)', url: 'https://creativecommons.org/publicdomain/zero/1.0/', requiresAttribution: false },
   'CC-BY 3.0': { name: 'Creative Commons Attribution 3.0', url: 'https://creativecommons.org/licenses/by/3.0/', requiresAttribution: true },
   'CC-BY 4.0': { name: 'Creative Commons Attribution 4.0', url: 'https://creativecommons.org/licenses/by/4.0/', requiresAttribution: true },
+  'Public Domain': { name: 'Public Domain (e.g. US government works such as NASA)', url: 'https://creativecommons.org/publicdomain/mark/1.0/', requiresAttribution: false },
 };
 export const FORMATS = ['GLB', 'GLTF', 'FBX', 'OBJ', 'BLEND', 'PNG', 'JPG', 'EXR', 'HDR'];
 
