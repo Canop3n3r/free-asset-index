@@ -1,6 +1,8 @@
 // Builds the static site + static JSON API into dist/ (the folder GitHub Pages serves).
 import { readFile, writeFile, mkdir, cp, rm, readdir } from 'node:fs/promises';
 import { previewFor } from '../src/previews.mjs';
+import { slimItem } from '../src/slim.mjs';
+import { CATEGORIES } from '../src/classify.mjs';
 import { creatorStats } from '../src/lib.mjs';
 import { classify } from '../src/classify.mjs';
 import { dedup, qualityScore } from '../src/quality.mjs';
@@ -19,6 +21,7 @@ await cp(new URL('web/', root), out, { recursive: true });
 await cp(new URL('src/lib.mjs', root), new URL('lib.mjs', out));
 const w = async (p, d) => { const u = new URL(p, out); await mkdir(new URL('./', u), { recursive: true }); await writeFile(u, JSON.stringify(d)); };
 await w('api/items.json', items);
+await w('api/search-index.json', items.map(slimItem));
 await w('api/creators.json', creatorStats(items));
 const count = k => items.reduce((m, i) => (m[i[k]] = (m[i[k]] || 0) + 1, m), {});
 await w('api/meta.json', { total: items.length, bySource: count('source'), byLicense: count('license'), builtAt: new Date().toISOString(), note: 'Link-only index. Check the license on each source page.' });
