@@ -18,7 +18,7 @@ export function mapWikimedia(p, kind = '2d') {
   const creator = strip(md.Artist?.value).slice(0, 120) || 'Wikimedia Commons contributor';
   return {
     source: 'wikimedia', sourceId: String(p.pageid), title: strip(md.ObjectName?.value) || name.replace(/\.[^.]+$/, '').replace(/_/g, ' '),
-    creator, creatorUrl: null, license: 'CC0', url: ii.descriptionurl || `https://commons.wikimedia.org/wiki/${encodeURIComponent(p.title.replace(/ /g, '_'))}`,
+    creator, creatorUrl: null, license: 'CC0', url: `https://commons.wikimedia.org/w/index.php?curid=${p.pageid}`, // file-page link (title URLs end in .png/.jpg)
     thumbnail: thumb, kind: audio ? 'audio' : kind, style: null,
     formats: [ext === 'JPEG' ? 'JPG' : ext], tags: ['wikimedia', ...strip(md.Categories?.value).split('|').filter(Boolean).slice(0, 12)],
     fileSize: Number.isFinite(ii.size) ? ii.size : null, textureRes: audio ? null : (Math.max(ii.width || 0, ii.height || 0) || null),
