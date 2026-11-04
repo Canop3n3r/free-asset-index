@@ -18,5 +18,16 @@ test('server: /api/search returns filtered results with license; /api/track coun
   assert.equal((await fetch(`${base}/api/track`, { method: 'POST', body: '{"type":"evil"}' })).status, 400);
   assert.deepEqual(await (await fetch(`${base}/api/stats`)).json(), { kenney: { views: 0, clicks: 1 } });
   assert.equal((await fetch(`${base}/../../etc/passwd`)).status, 404);
+  const bi = await (await fetch(`${base}/api/bundles.json`)).json();
+  assert.ok(Array.isArray(bi));
+  const many = Array.from({ length: 3 }, (_, n) => normalizeItem({ source: 'kenney', sourceId: 's' + n, title: 'Spaceship ' + n, creator: 'Kenney', license: 'CC0', url: 'https://kenney.nl/assets/s' + n, formats: ['GLB'] }));
+  await writeFile(join(dir, 'many.json'), JSON.stringify(many));
+  const s2 = await makeServer({ itemsPath: join(dir, 'many.json') }); await new Promise(r => s2.listen(0, r));
+  const b2 = `http://127.0.0.1:${s2.address().port}`;
+  const sk = await (await fetch(`${b2}/api/bundles/space-kit.json`)).json();
+  assert.equal(sk.count, 3); assert.match(sk.attribution, /Spaceship 0/);
+  assert.equal((await fetch(`${b2}/api/bundles/nope`)).status, 404);
+  assert.equal((await (await fetch(`${b2}/api/search?category=space`)).json()).total, 3);
+  s2.close();
   srv.close();
 });

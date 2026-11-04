@@ -3,17 +3,23 @@ import { createServer } from 'node:http';
 import { readFile, appendFile } from 'node:fs/promises';
 import { extname, join, normalize } from 'node:path';
 import { search, creatorStats } from './src/lib.mjs';
+import { classify } from './src/classify.mjs';
+import { buildBundles, bundleIndex } from './src/bundles.mjs';
 
 const DIST = new URL('./dist/', import.meta.url).pathname;
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css', '.json': 'application/json' };
 export async function makeServer({ itemsPath = join(DIST, 'api/items.json'), statsFile = process.env.STATS_FILE || null } = {}) {
-  const items = JSON.parse(await readFile(itemsPath));
+  const items = JSON.parse(await readFile(itemsPath)).map(i => (i.categories ? i : { ...i, ...classify(i) }));
+  const bundles = buildBundles(items);
   const stats = {};
   const json = (res, code, d) => { res.writeHead(code, { 'content-type': 'application/json', 'access-control-allow-origin': '*' }); res.end(JSON.stringify(d)); };
   return createServer(async (req, res) => {
     const u = new URL(req.url, 'http://x');
     if (req.method === 'OPTIONS') { res.writeHead(204, { 'access-control-allow-origin': '*', 'access-control-allow-headers': 'content-type' }); return res.end(); }
     if (u.pathname === '/api/search') return json(res, 200, search(items, Object.fromEntries(u.searchParams)));
+    if (u.pathname === '/api/bundles' || u.pathname === '/api/bundles.json') return json(res, 200, bundleIndex(bundles));
+    const bm = u.pathname.match(/^\/api\/bundles\/([a-z0-9-]+?)(\.json)?$/);
+    if (bm) { const b = bundles.find(x => x.slug === bm[1]); return b ? json(res, 200, b) : json(res, 404, { error: 'no such bundle' }); }
     if (u.pathname === '/api/creators') return json(res, 200, creatorStats(items));
     if (u.pathname === '/api/stats') return json(res, 200, stats);
     if (u.pathname === '/api/track' && req.method === 'POST') {
