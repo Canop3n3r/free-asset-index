@@ -3,6 +3,7 @@
 import { writeFile, mkdir, readFile } from 'node:fs/promises';
 import { crawlFreesound } from '../src/sources/freesound.mjs';
 import { crawlSmithsonian } from '../src/sources/smithsonian.mjs';
+import { crawlSketchfab } from '../src/sources/sketchfab.mjs';
 import { normalizeItem } from '../src/lib.mjs';
 import { crawlAmbientCG } from '../src/sources/ambientcg.mjs';
 import { crawlQuaternius } from '../src/sources/quaternius.mjs';
@@ -10,9 +11,9 @@ import { crawlPolyHaven } from '../src/sources/polyhaven.mjs';
 const UA = 'free-asset-index/0.1 (+https://github.com/Canop3n3r/free-asset-index; link-only index)';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const get = async (url, json) => { const r = await fetch(url, { headers: { 'User-Agent': UA } }); if (!r.ok) throw new Error(`${r.status} ${url}`); return json ? r.json() : r.text(); };
-const SOURCES = { ambientcg: crawlAmbientCG, quaternius: crawlQuaternius, polyhaven: crawlPolyHaven, freesound: crawlFreesound, smithsonian: crawlSmithsonian };
+const SOURCES = { ambientcg: crawlAmbientCG, quaternius: crawlQuaternius, polyhaven: crawlPolyHaven, freesound: crawlFreesound, smithsonian: crawlSmithsonian, sketchfab: crawlSketchfab };
 // API keys are read from files at crawl time only (never committed, logged, or written to output).
-const KEYS = { freesound: 'FREESOUND_API_KEY', smithsonian: 'DATA_GOV_API_KEY' };
+const KEYS = { freesound: 'FREESOUND_API_KEY', smithsonian: 'DATA_GOV_API_KEY', sketchfab: 'SKETCHFAB_API_TOKEN' };
 const SECRETS = process.env.SECRETS_DIR || '/home/box/secrets';
 for (const name of process.argv.slice(2)) {
   const key = KEYS[name] ? (await readFile(`${SECRETS}/${KEYS[name]}`, 'utf8')).trim() : undefined;

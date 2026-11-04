@@ -16,6 +16,7 @@ A searchable index of **free 3D and 2D game assets** with clear licenses (CC0 / 
 | [ambientCG](https://ambientcg.com) | Official API `/api/v2/full_json` (`node scripts/crawl-source.mjs ambientcg`) | CC0 |
 | [Smithsonian Open Access](https://www.si.edu/openaccess) | Official API (api.data.gov key in a header, read at crawl time only), 3D packages with CC0 usage only | CC0 |
 | [Freesound](https://freesound.org) | Official APIv2 (key in a header, read at crawl time only). CC0 / CC-BY only; NC and Sampling+ excluded. `downloadUrl` = official HQ MP3 preview | CC0 / CC-BY |
+| [Sketchfab](https://sketchfab.com) | Data API v3 search (token in a header, read at crawl time only), `downloadable=true`, license `cc0` / `by` only. Links to the model page; quick view uses the official Sketchfab embed player | CC0 / CC-BY 4.0 |
 | [Kenney](https://kenney.nl) | **Hand-curated seed** (`data/kenney-seed.json`). kenney.nl's robots.txt disallows `/assets/`, so we don't crawl it | CC0 |
 
 Every item stores `license`, `licenseUrl`, `creator`, `creatorUrl`, `url` (the source page), `formats`, `style`, `kind` and `tags`, plus a generated `attribution` credit line.
