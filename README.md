@@ -13,6 +13,7 @@ A searchable index of **free 3D and 2D game assets** with clear licenses (CC0 / 
 | [Poly Haven](https://polyhaven.com) | Official public API `api.polyhaven.com/assets` | CC0 |
 | [Quaternius](https://quaternius.com) | Pack list + pack page meta, 1 request/s | CC0 ([license](https://quaternius.com/license.html)) |
 | [OpenGameArt](https://opengameart.org) | Advanced search filtered to CC0 / CC-BY 3.0 / CC-BY 4.0, then the item page for author and license. Honors robots.txt `Crawl-delay: 10` | per item |
+| [ambientCG](https://ambientcg.com) | Official API `/api/v2/full_json` (`node scripts/crawl-source.mjs ambientcg`) | CC0 |
 | [Kenney](https://kenney.nl) | **Hand-curated seed** (`data/kenney-seed.json`). kenney.nl's robots.txt disallows `/assets/`, so we don't crawl it | CC0 |
 
 Every item stores `license`, `licenseUrl`, `creator`, `creatorUrl`, `url` (the source page), `formats`, `style`, `kind` and `tags`, plus a generated `attribution` credit line.
