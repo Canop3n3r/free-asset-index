@@ -24,7 +24,7 @@ export function mapSketchfab(m) {
     embedUrl: /^https:\/\/sketchfab\.com\/models\/[0-9a-f]+\/embed$/.test(m.embedUrl || '') ? m.embedUrl : null,
   };
 }
-export const SK_QUERIES = ['', 'low poly', 'vehicle', 'spaceship', 'rocket', 'tree', 'rock', 'building', 'character', 'prop', 'weapon', 'furniture', 'game asset'];
+export const SK_QUERIES = ['', 'low poly', 'vehicle', 'spaceship', 'rocket', 'tree', 'rock', 'building', 'character', 'prop', 'weapon', 'furniture', 'game asset', 'environment', 'animal', 'robot', 'house', 'car', 'sword', 'plant', 'medieval', 'sci-fi', 'creature', 'dungeon', 'food', 'stylized', 'pbr', 'ruins', 'aircraft'];
 export async function crawlSketchfab({ sleep, key, fetchImpl = fetch, log = console.log, pagesTop = Number(process.env.SK_TOP_PAGES || 25), pagesQuery = Number(process.env.SK_QUERY_PAGES || 5) }) {
   const out = new Map();
   for (const lic of ['cc0', 'by']) for (const q of SK_QUERIES) {
