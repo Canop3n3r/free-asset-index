@@ -41,9 +41,10 @@ export function normalizeItem(raw) {
 export function search(items, p = {}) {
   const q = (p.q || '').toLowerCase().trim().split(/\s+/).filter(Boolean);
   const fmt = p.format ? String(p.format).toUpperCase() : null;
+  const fmts = fmt === 'GLB' ? ['GLB', 'GLTF'] : [fmt];
   const lic = p.license ? String(p.license).toUpperCase() : null;
   const out = items.filter(i =>
-    (!fmt || i.formats.includes(fmt)) &&
+    (!fmt || fmts.some(f => i.formats.includes(f))) &&
     (!lic || i.license.toUpperCase().startsWith(lic)) &&
     (!p.style || i.style === p.style) &&
     (!p.kind || i.kind === p.kind) &&
