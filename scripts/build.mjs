@@ -2,10 +2,12 @@
 import { readFile, writeFile, mkdir, cp, rm } from 'node:fs/promises';
 import { creatorStats } from '../src/lib.mjs';
 import { classify } from '../src/classify.mjs';
+import { dedup, qualityScore } from '../src/quality.mjs';
 import { buildBundles, bundleIndex } from '../src/bundles.mjs';
 const root = new URL('../', import.meta.url);
 const out = new URL(process.env.OUT_DIR || 'dist/', root);
-const items = JSON.parse(await readFile(new URL('data/items.json', root))).map(i => ({ ...i, ...classify(i) }));
+const rawItems = JSON.parse(await readFile(new URL('data/items.json', root)));
+const items = dedup(rawItems).map(i => ({ ...i, ...classify(i), quality: qualityScore(i) }));
 await rm(out, { recursive: true, force: true });
 await cp(new URL('web/', root), out, { recursive: true });
 await cp(new URL('src/lib.mjs', root), new URL('lib.mjs', out));
