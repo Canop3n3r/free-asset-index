@@ -7,6 +7,6 @@
 <p>Static hosting cannot run queries. Download one of the files above and filter it, or use <code>src/lib.mjs</code> <code>search()</code>.</p>
 <h2>Search endpoint (Docker server)</h2><pre>GET /api/search?q=chair&amp;format=GLB&amp;license=CC0&amp;style=realistic&amp;kind=3d&amp;source=polyhaven&amp;creator=slug&amp;limit=50&amp;offset=0
 → {"total":12,"offset":0,"limit":50,"results":[{"id":"polyhaven:ArmChair_01","title":"Arm Chair 01","creator":"Kirill Sannikov","license":"CC0","licenseUrl":"…","url":"…","attribution":"…",…}]}</pre>
-<p>Run it with <code>docker compose up</code>. Also available: <code>/api/creators</code>, <code>POST /api/track</code>, <code>/api/stats</code>.</p>
-<h2>Tracking, and its limits</h2><p>On GitHub Pages, per-creator views and outbound clicks are stored in your own browser's localStorage. There are no global totals. Setting <code>trackEndpoint</code> in <code>config.json</code> (for example, the Docker server's <code>/api/track</code>) also sends anonymous events there with <code>navigator.sendBeacon</code>.</p>
+<p>Note: <code>format=GLB</code> also matches glTF (GLTF) assets. Run it with <code>docker compose up</code>. Also available: <code>/api/creators</code>, <code>POST /api/track</code>, <code>/api/stats</code>.</p>
+<h2>Tracking, and its limits</h2><p>Anonymous per-creator views and clicks, with no personal data, go to a rate-limited Supabase RPC. Global totals: <code>POST https://npgdklpvogjwxnghjtkg.supabase.co/rest/v1/rpc/creator_stats</code> with the <code>apikey</code> header set to the publishable key in <a href="config.json">config.json</a>. The site keeps working if that endpoint is down.</p>
 </main></body></html>

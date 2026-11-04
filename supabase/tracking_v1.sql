@@ -1,0 +1,6 @@
+-- Applied to Supabase project npgdklpvogjwxnghjtkg (free tier) as migration tracking_v1
+-- Table public.events(event_type view|click, creator slug, item id, created_at). RLS on, no policies, no grants:
+-- anon cannot read/write it directly. Only two SECURITY DEFINER RPCs are exposed to anon:
+--   track_event(p_type, p_creator, p_item) -> validates input; rate limits 300/min global, 30/min per creator; no IP/PII stored
+--   creator_stats() -> (creator, views, clicks) aggregates
+-- Full SQL: see git history of this file / Supabase dashboard > Database > Migrations.

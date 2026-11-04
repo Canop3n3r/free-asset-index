@@ -1,1 +1,5 @@
-{"trackEndpoint":null}
+{
+  "trackEndpoint": "https://npgdklpvogjwxnghjtkg.supabase.co/rest/v1/rpc/track_event",
+  "statsEndpoint": "https://npgdklpvogjwxnghjtkg.supabase.co/rest/v1/rpc/creator_stats",
+  "trackKey": "sb_publishable_6Xi2OYVtDrPnAVxZObsXPg_SkNojQbo"
+}

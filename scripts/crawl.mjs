@@ -46,16 +46,19 @@ async function quaternius() {
 }
 
 // OpenGameArt: robots.txt asks Crawl-delay: 10 -> we wait 10s between every request.
-async function opengameart({ perCombo = Number(process.env.OGA_PER_COMBO || 12) } = {}) {
+async function opengameart({ perCombo = Number(process.env.OGA_PER_COMBO || 12), pages = Number(process.env.OGA_PAGES || 1) } = {}) {
+  // Resumable: items already in data/items.json are kept and not re-fetched; progress is saved after every item.
+  const prev = existing.filter(i => i.source === 'opengameart');
+  const seen = new Set(prev.map(i => i.id.slice('opengameart:'.length)));
   const types = { 9: '2d', 10: '3d', 14: 'texture' };
   const lics = { 4: 'CC0', 2: 'CC-BY 3.0', 17981: 'CC-BY 4.0' };
-  const out = [];
-  for (const [tid, kind] of Object.entries(types)) for (const [lid, license] of Object.entries(lics)) {
+  const out = [...prev];
+  for (const [tid, kind] of Object.entries(types)) for (const [lid, license] of Object.entries(lics)) for (let page = 0; page < pages; page++) {
     await sleep(10000);
-    const list = await get(`https://opengameart.org/art-search-advanced?field_art_type_tid%5B%5D=${tid}&field_art_licenses_tid%5B%5D=${lid}&items_per_page=24&sort_by=count&sort_order=DESC`);
+    let list; try { list = await get(`https://opengameart.org/art-search-advanced?field_art_type_tid%5B%5D=${tid}&field_art_licenses_tid%5B%5D=${lid}&items_per_page=48&sort_by=count&sort_order=DESC&page=${page}`); } catch (e) { console.warn(e.message); continue; }
     const slugs = [...new Set([...list.matchAll(/art-preview-title">\s*<a href="\/content\/([^"]+)">/g)].map(m => m[1]))].slice(0, perCombo);
     for (const slug of slugs) {
-      if (out.some(o => o.sourceId === slug)) continue;
+      if (seen.has(slug)) continue; seen.add(slug);
       await sleep(10000);
       try {
         const p = await get(`https://opengameart.org/content/${slug}`);
@@ -74,6 +77,7 @@ async function opengameart({ perCombo = Number(process.env.OGA_PER_COMBO || 12) 
           license: lic, url: `https://opengameart.org/content/${slug}`, thumbnail: thumb ? `https://opengameart.org${thumb}` : null,
           kind, style: /pixel/i.test(tags.join(' ') + title) ? 'pixel' : null, formats, tags });
         console.log('oga', out.length, slug);
+        if (out.length % 10 === 0) await save('opengameart', out);
       } catch (e) { console.warn(e.message); }
     }
   }
@@ -88,14 +92,14 @@ async function kenney() {
     license: 'CC0', url: `https://kenney.nl/assets/${s.slug}`, thumbnail: null, kind: s.kind, style: s.style, formats: s.formats, tags: s.tags || [] }));
 }
 
+let existing = []; try { existing = JSON.parse(await readFile(new URL('../data/items.json', import.meta.url))); } catch {}
 const SOURCES = { polyhaven, quaternius, opengameart, kenney };
 const want = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(SOURCES);
 const path = new URL('../data/items.json', import.meta.url);
-let existing = []; try { existing = JSON.parse(await readFile(path)); } catch {}
-for (const name of want) {
-  const raw = await SOURCES[name]();
-  const items = []; for (const r of raw) { try { items.push(normalizeItem(r)); } catch (e) { console.warn(name, r.sourceId, e.message); } }
+async function save(name, raw) {
+  const items = []; for (const r of raw) { if (r.id) { items.push(r); continue; } try { items.push(normalizeItem(r)); } catch (e) { console.warn(name, r.sourceId, e.message); } }
   existing = existing.filter(i => i.source !== name).concat(items);
   await writeFile(path, JSON.stringify(existing, null, 1));
-  console.log(name, items.length);
+  return items.length;
 }
+for (const name of want) console.log(name, await save(name, await SOURCES[name]()));

@@ -46,3 +46,10 @@ test('creatorStats groups items', () => {
 });
 
 test('slugify', () => assert.equal(slugify('Ça va  Bob!'), 'ca-va-bob'));
+
+test('GLB filter also matches GLTF assets (same glTF family)', () => {
+  const g = [normalizeItem({ source: 'polyhaven', sourceId: 'g', title: 'T', creator: 'C', license: 'CC0', url: 'https://x.y/g', formats: ['GLTF'] })];
+  assert.equal(search(g, { format: 'GLB' }).total, 1);
+  assert.equal(search(g, { format: 'gltf' }).total, 1);
+  assert.equal(search(g, { format: 'FBX' }).total, 0);
+});
