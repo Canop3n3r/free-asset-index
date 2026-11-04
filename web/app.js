@@ -31,6 +31,7 @@ function quickView(i) {
   <p><a class="lic" href="${esc(i.licenseUrl)}" target="_blank" rel="noopener">${esc(i.license)}</a> · ${esc(i.kind || '')} ${(i.formats || []).map(f => `<span class="fmt">${esc(f)}</span>`).join('')}</p>
   <p class="meta">${esc([...(i.categories || []), ...(i.styles || []), i.audio].filter(Boolean).join(' · '))}</p>
   <p class="meta">${[i.triangles != null && `${i.triangles.toLocaleString()} tris`, i.textureRes && `${i.textureRes >= 1024 ? i.textureRes / 1024 + 'K' : i.textureRes + 'px'} textures`, i.fileSize != null && `download ${mb(i.fileSize)}`, i.duration && `${i.duration.toFixed(1)} s`, i.maps?.length && `maps: ${i.maps.join(', ')}`].filter(Boolean).map(esc).join(' · ')}</p>
+  ${i.embedUrl ? `<button data-embed="${esc(i.embedUrl)}">View in 3D (Sketchfab player)</button>` : ''}
   ${i.preview ? `<audio controls preload="none" src="${esc(i.preview)}"></audio>` : ''}
   ${i.downloadUrl ? `<p class="meta"><a href="${esc(i.downloadUrl)}" data-out="${esc(i.creatorSlug)}" data-id="${esc(i.id)}" rel="noopener">Direct download${i.fileSize ? ` (${mb(i.fileSize)})` : ''} ↓</a>, served by ${esc(i.source)}</p>` : ''}
   <a class="btn" href="${esc(i.url)}" target="_blank" rel="noopener" data-out="${esc(i.creatorSlug)}" data-id="${esc(i.id)}">Get it on ${esc(i.source)} ↗</a>
@@ -72,6 +73,7 @@ document.addEventListener('click', e => {
   const out = e.target.closest('a[data-out]'); if (out) track('click', out.dataset.out, out.dataset.id);
   if (e.target.matches('[data-copy]')) { const ta = e.target.previousElementSibling; ta.select(); navigator.clipboard?.writeText(ta.value); e.target.textContent = 'Copied'; }
   if (e.target.matches('#more')) { shown += PAGE; const g = $('#grid'); g.insertAdjacentHTML('beforeend', lastResults.slice(shown - PAGE, shown).map(card).join('')); if (shown >= lastResults.length) e.target.remove(); }
+  if (e.target.matches('[data-embed]')) { const u = e.target.dataset.embed; if (/^https:\/\/sketchfab\.com\/models\/[0-9a-f]+\/embed$/.test(u)) $('#qv .qv-img').innerHTML = `<iframe title="Sketchfab 3D viewer" src="${u}?autostart=1&ui_infos=0" allow="autoplay; fullscreen; xr-spatial-tracking" allowfullscreen style="width:100%;height:100%;min-height:420px;border:0"></iframe>`; }
   if (e.target.matches('#qv .close') || e.target.id === 'qv') $('#qv').close();
   const c = e.target.closest('[data-qv]'); if (c) quickView(byId.get(c.dataset.qv));
 });

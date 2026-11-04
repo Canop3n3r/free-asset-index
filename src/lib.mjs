@@ -41,6 +41,8 @@ export function normalizeItem(raw) {
   const https = u => (typeof u === 'string' && /^https:\/\//.test(u) && !/[?&](token|api_key|key)=/i.test(u) ? u : null);
   item.downloadUrl = https(raw.downloadUrl);
   item.fileSize = num(raw.fileSize); item.triangles = num(raw.triangles); item.textureRes = num(raw.textureRes);
+  if (Number.isFinite(raw.vertices)) item.vertices = Math.round(raw.vertices);
+  if (typeof raw.embedUrl === 'string' && /^https:\/\/sketchfab\.com\/models\/[0-9a-f]+\/embed$/.test(raw.embedUrl)) item.embedUrl = raw.embedUrl;
   const pv = https(raw.preview); if (pv) item.preview = pv;
   if (Number.isFinite(raw.duration)) item.duration = Math.round(raw.duration * 10) / 10;
   const dls = (Array.isArray(raw.downloads) ? raw.downloads : []).filter(d => d && https(d.url)).map(d => ({ label: String(d.label), url: d.url, size: num(d.size) }));
