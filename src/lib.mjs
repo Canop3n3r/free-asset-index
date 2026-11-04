@@ -35,6 +35,7 @@ export function normalizeItem(raw) {
     formats: [...new Set((raw.formats || []).map(f => String(f).toUpperCase()))],
     tags: [...new Set((raw.tags || []).map(t => String(t).toLowerCase()))].slice(0, 20),
   };
+  if (Array.isArray(raw.maps) && raw.maps.length) item.maps = raw.maps.map(String);
   item.attribution = attribution(item);
   return item;
 }

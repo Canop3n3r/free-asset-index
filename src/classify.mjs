@@ -9,6 +9,8 @@ const CATEGORY_RULES = {
   props: W(['prop', 'crate', 'barrel', 'chair', 'table', 'furniture', 'weapon', 'gun', 'sword', 'food', 'tool', 'lamp', 'box', 'bottle', 'chest', 'item', 'shelf', 'sofa', 'bed', 'kit', 'decoration', 'blaster', 'camera', 'statue', 'sculpture', 'toy', 'knife', 'tank', 'canister', 'cart', 'trolley']),
   textures: W(['texture', 'material', 'pbr', 'seamless', 'tileable']),
   hdris: W(['hdri', 'skybox', 'hdr']),
+  water: W(['water', 'ocean', 'sea', 'lake', 'river', 'wave', 'pond', 'puddle', 'underwater', 'shore', 'waterfall']),
+  launchpads: /\b(launch\s*pads?|landing\s*pads?|helipads?|spaceports?|tarmac|runways?|airstrips?|launch\s*(site|tower|complex)s?)\b/i,
   ui: W(['ui', 'gui', 'hud', 'icon', 'button', 'interface', 'menu', 'font', 'cursor', 'prompt']),
 };
 const STYLE_RULES = {
@@ -24,8 +26,11 @@ const NEGATIVE = {
   characters: /\b(statue|knife|knives|head|toy|trap|figurine|bust|sculpture|carved|ornament|skull|cassette)\b/i,
 };
 export const CATEGORIES = [...Object.keys(CATEGORY_RULES), 'audio'];
+export const AUDIO_TYPES = ['sfx', 'ambience', 'music'];
 // Textures/HDRIs are surfaces, not objects: only these keyword categories apply to them.
-const SURFACE_OK = new Set(['nature', 'buildings', 'textures', 'hdris']);
+const SURFACE_OK = new Set(['nature', 'buildings', 'textures', 'water', 'launchpads']);
+const MAPS = { color: /\b(color|colour|albedo|diffuse|basecolor)\b/i, normal: /\bnormal\b/i, roughness: /\brough(ness)?\b/i, displacement: /\b(displacement|height|bump)\b/i, 'ambient-occlusion': /\b(ao|ambient[- ]occlusion)\b/i, metalness: /\bmetal(ness|lic)\b/i, opacity: /\b(opacity|alpha)\b/i, emission: /\bemissi(ve|on)\b/i };
+const AUDIO = { music: W(['music', 'song', 'melody', 'chiptune', 'soundtrack', 'beat', 'piano', 'guitar', 'orchestral']), ambience: W(['ambience', 'ambient', 'atmosphere', 'soundscape', 'background', 'room tone', 'field recording', 'drone']) };
 export const STYLES = Object.keys(STYLE_RULES);
 
 export function classify(item) {
@@ -33,9 +38,11 @@ export function classify(item) {
   // Poly Haven tags are broad descriptors (e.g. 'player', 'vehicle' on unrelated props): use titles for object categories.
   const objText = item.source === 'polyhaven' ? item.title : text;
   const OBJ = new Set(['vehicles', 'space', 'characters', 'props', 'ui']);
-  const surface = item.kind === 'texture' || item.kind === 'hdri';
+  if (item.kind === 'hdri') return { categories: ['hdris'], styles: item.style === 'realistic' || item.source === 'polyhaven' ? ['realistic'] : [] };
+  const surface = item.kind === 'texture';
   const categories = new Set(Object.keys(CATEGORY_RULES).filter(c => CATEGORY_RULES[c].test(OBJ.has(c) ? objText : text) && !(NEGATIVE[c] && NEGATIVE[c].test(OBJ.has(c) ? objText : text)) && (!surface || SURFACE_OK.has(c))));
-  if (item.kind === 'audio') categories.add('audio');
+  let audio;
+  if (item.kind === 'audio') { categories.add('audio'); audio = AUDIO.music.test(text) ? 'music' : AUDIO.ambience.test(text) ? 'ambience' : 'sfx'; }
   if (item.kind === 'texture') categories.add('textures');
   if (item.kind === 'hdri') categories.add('hdris');
   if (item.kind === '3d' && !categories.size) categories.add('props');
@@ -45,5 +52,12 @@ export function classify(item) {
   if (item.style === 'cartoon' || item.style === 'flat') styles.add('stylized');
   if (item.style === 'realistic' || item.source === 'polyhaven') styles.add('realistic');
   for (const s of STYLES) if (STYLE_RULES[s].test(text)) styles.add(s);
-  return { categories: [...categories], styles: [...styles] };
+  const out = { categories: [...categories], styles: [...styles] };
+  if (audio) out.audio = audio;
+  if (item.kind === 'texture') {
+    const maps = new Set((item.maps || []).map(m => String(m).toLowerCase()));
+    for (const [m, re] of Object.entries(MAPS)) if (re.test(text)) maps.add(m);
+    out.maps = [...maps];
+  }
+  return out;
 }
