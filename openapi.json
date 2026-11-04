@@ -1,0 +1,324 @@
+{
+ "openapi": "3.0.3",
+ "info": {
+  "title": "Free Asset Index API",
+  "version": "1.0.0",
+  "description": "Link-only index of free CC0/CC-BY game assets. Static JSON on GitHub Pages; /api/search requires the self-hosted Docker server."
+ },
+ "servers": [
+  {
+   "url": "https://canop3n3r.github.io/free-asset-index",
+   "description": "Static (Pages)"
+  },
+  {
+   "url": "http://localhost:8080",
+   "description": "Self-hosted Docker server"
+  }
+ ],
+ "paths": {
+  "/api/search": {
+   "get": {
+    "summary": "Search assets (Docker server only)",
+    "parameters": [
+     {
+      "name": "q",
+      "in": "query",
+      "required": false,
+      "description": "Free text",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "category",
+      "in": "query",
+      "required": false,
+      "description": "Category",
+      "schema": {
+       "type": "string",
+       "enum": [
+        "vehicles",
+        "space",
+        "nature",
+        "buildings",
+        "characters",
+        "props",
+        "textures",
+        "hdris",
+        "audio",
+        "ui"
+       ]
+      }
+     },
+     {
+      "name": "kind",
+      "in": "query",
+      "required": false,
+      "description": "Type",
+      "schema": {
+       "type": "string",
+       "enum": [
+        "3d",
+        "2d",
+        "texture",
+        "hdri"
+       ]
+      }
+     },
+     {
+      "name": "style",
+      "in": "query",
+      "required": false,
+      "description": "Style",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "format",
+      "in": "query",
+      "required": false,
+      "description": "GLB also matches GLTF",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "license",
+      "in": "query",
+      "required": false,
+      "description": "CC0 or CC-BY prefix",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "source",
+      "in": "query",
+      "required": false,
+      "description": "Source",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "creator",
+      "in": "query",
+      "required": false,
+      "description": "Creator slug",
+      "schema": {
+       "type": "string"
+      }
+     },
+     {
+      "name": "sort",
+      "in": "query",
+      "required": false,
+      "description": "Sort",
+      "schema": {
+       "type": "string",
+       "enum": [
+        "quality",
+        "title"
+       ]
+      }
+     },
+     {
+      "name": "limit",
+      "in": "query",
+      "required": false,
+      "description": "1-200",
+      "schema": {
+       "type": "integer"
+      }
+     },
+     {
+      "name": "offset",
+      "in": "query",
+      "required": false,
+      "description": "Offset",
+      "schema": {
+       "type": "integer"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Results",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "properties": {
+          "total": {
+           "type": "integer"
+          },
+          "offset": {
+           "type": "integer"
+          },
+          "limit": {
+           "type": "integer"
+          },
+          "results": {
+           "type": "array",
+           "items": {
+            "$ref": "#/components/schemas/Item"
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/items.json": {
+   "get": {
+    "summary": "All assets",
+    "responses": {
+     "200": {
+      "description": "Array of items",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Item"
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/bundles": {
+   "get": {
+    "summary": "Bundle index (static: /api/bundles.json)",
+    "responses": {
+     "200": {
+      "description": "Bundles"
+     }
+    }
+   }
+  },
+  "/api/bundles/{slug}": {
+   "get": {
+    "summary": "One bundle with items and combined attribution (static: /api/bundles/{slug}.json; engine manifests at /api/bundles/{slug}.{godot|unity|threejs}.json)",
+    "parameters": [
+     {
+      "name": "slug",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Bundle"
+     },
+     "404": {
+      "description": "Unknown bundle"
+     }
+    }
+   }
+  },
+  "/api/creators.json": {
+   "get": {
+    "summary": "Creators with counts",
+    "responses": {
+     "200": {
+      "description": "Creators"
+     }
+    }
+   }
+  }
+ },
+ "components": {
+  "schemas": {
+   "Item": {
+    "type": "object",
+    "required": [
+     "id",
+     "title",
+     "creator",
+     "license",
+     "licenseUrl",
+     "url",
+     "attribution"
+    ],
+    "properties": {
+     "id": {
+      "type": "string"
+     },
+     "source": {
+      "type": "string"
+     },
+     "title": {
+      "type": "string"
+     },
+     "creator": {
+      "type": "string"
+     },
+     "creatorSlug": {
+      "type": "string"
+     },
+     "creatorUrl": {
+      "type": "string"
+     },
+     "license": {
+      "type": "string"
+     },
+     "licenseUrl": {
+      "type": "string"
+     },
+     "url": {
+      "type": "string"
+     },
+     "thumbnail": {
+      "type": "string"
+     },
+     "image": {
+      "type": "string"
+     },
+     "kind": {
+      "type": "string"
+     },
+     "attribution": {
+      "type": "string"
+     },
+     "formats": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "tags": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "categories": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "styles": {
+      "type": "array",
+      "items": {
+       "type": "string"
+      }
+     },
+     "quality": {
+      "type": "integer"
+     }
+    }
+   }
+  }
+ }
+}

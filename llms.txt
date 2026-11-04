@@ -1,0 +1,21 @@
+# Free Asset Index
+
+> A link-only index of free 3D/2D game assets (CC0 and CC-BY only) from Poly Haven, ambientCG, Quaternius, Kenney and OpenGameArt. Every record includes license, licenseUrl, creator and a ready-made attribution line. Files stay on the creators' sites: link users to `url` and never rehost files.
+
+Base URL: https://canop3n3r.github.io/free-asset-index/
+
+## Static JSON (no key, CORS-friendly via GitHub Pages)
+- [api/search-index.json](https://canop3n3r.github.io/free-asset-index/api/search-index.json): compact index of all assets. Filter it client-side by title/tags/categories/styles/formats/license.
+- [api/items.json](https://canop3n3r.github.io/free-asset-index/api/items.json): full records, including the `attribution` string
+- [api/meta.json](https://canop3n3r.github.io/free-asset-index/api/meta.json): counts per source and license
+- [api/bundles.json](https://canop3n3r.github.io/free-asset-index/api/bundles.json): curated bundles. Each one is at `api/bundles/{slug}.json`, with engine manifests at `api/bundles/{slug}.{godot|unity|threejs}.json` (target paths, preferred format, import hints)
+- `api/source/{source}.json`, `api/license/{cc0|cc-by}.json`, `api/format/{glb|fbx|obj|png|hdr|...}.json`
+- [openapi.json](https://canop3n3r.github.io/free-asset-index/openapi.json): OpenAPI 3 description, including the self-hosted search server
+
+## Record fields
+id, source, title, creator, creatorSlug, creatorUrl, license (CC0 | CC-BY 3.0 | CC-BY 4.0), licenseUrl, url (source page), thumbnail, image (largest preview), kind (3d|2d|texture|hdri), styles[], categories[], formats[], tags[], quality (0-100), alsoAt[], attribution.
+
+## Rules for agents
+- Always show `license` and, for CC-BY, include `attribution` in the user's credits.
+- Link to `url` for downloads. Do not scrape or mirror the files.
+- Self-hosted search (Docker): `GET /api/search?q=&category=&kind=&style=&format=&license=&source=&creator=&sort=quality&limit=&offset=`
