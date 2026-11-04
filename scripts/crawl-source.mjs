@@ -17,7 +17,7 @@ const KEYS = { freesound: 'FREESOUND_API_KEY', smithsonian: 'DATA_GOV_API_KEY', 
 const SECRETS = process.env.SECRETS_DIR || '/home/box/secrets';
 for (const name of process.argv.slice(2)) {
   const key = KEYS[name] ? (await readFile(`${SECRETS}/${KEYS[name]}`, 'utf8')).trim() : undefined;
-  const items = []; for (const r of await SOURCES[name]({ get, sleep, key })) { try { items.push(normalizeItem(r)); } catch (e) { console.warn(name, r.sourceId, e.message); } }
+  const items = []; for (const r of await SOURCES[name]({ get, sleep, key, ...(name === "freesound" && process.env.FS_PAGES ? { pages: Number(process.env.FS_PAGES) } : {}) })) { try { items.push(normalizeItem(r)); } catch (e) { console.warn(name, r.sourceId, e.message); } }
   await mkdir(new URL('../data/sources/', import.meta.url), { recursive: true });
   await writeFile(new URL(`../data/sources/${name}.json`, import.meta.url), JSON.stringify(items, null, 1));
   console.log(name, items.length);
