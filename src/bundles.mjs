@@ -14,6 +14,8 @@ export const BUNDLE_DEFS = [
   { slug: 'pbr-textures', title: 'PBR Textures', description: 'Tileable textures and materials.', match: i => has(i, 'categories', 'textures') },
   { slug: 'hdri-skies', title: 'HDRI Skies', description: 'HDRI environment maps for lighting.', match: i => has(i, 'categories', 'hdris') },
   { slug: 'audio', title: 'Audio', description: 'Sound effects and music.', match: i => has(i, 'categories', 'audio') },
+  { slug: 'water-and-ocean', title: 'Water & Ocean', description: 'Water, ocean and lake materials and models, with normal and roughness maps where available.', match: i => has(i, 'categories', 'water') },
+  { slug: 'launch-pads-and-tarmac', title: 'Launch Pads, Spaceports & Tarmac', description: 'Launch pads, landing pads, runways and tarmac surfaces.', match: i => has(i, 'categories', 'launchpads') },
   { slug: 'glb-game-ready', title: 'GLB / glTF Game-Ready', description: '3D models available as GLB or glTF.', match: i => fmt(i, 'GLB', 'GLTF') },
   { slug: 'cc0-only-everything', title: 'CC0 Only (Everything)', description: 'Every public-domain asset. No credit required, though credit is appreciated.', match: i => i.license === 'CC0' },
 ];
