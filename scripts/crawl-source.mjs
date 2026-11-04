@@ -1,0 +1,15 @@
+// Crawl one API-based source into data/sources/<name>.json (never touches data/items.json).
+// Usage: node scripts/crawl-source.mjs ambientcg
+import { writeFile, mkdir } from 'node:fs/promises';
+import { normalizeItem } from '../src/lib.mjs';
+import { crawlAmbientCG } from '../src/sources/ambientcg.mjs';
+const UA = 'free-asset-index/0.1 (+https://github.com/Canop3n3r/free-asset-index; link-only index)';
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const get = async (url, json) => { const r = await fetch(url, { headers: { 'User-Agent': UA } }); if (!r.ok) throw new Error(`${r.status} ${url}`); return json ? r.json() : r.text(); };
+const SOURCES = { ambientcg: crawlAmbientCG };
+for (const name of process.argv.slice(2)) {
+  const items = []; for (const r of await SOURCES[name]({ get, sleep })) { try { items.push(normalizeItem(r)); } catch (e) { console.warn(name, r.sourceId, e.message); } }
+  await mkdir(new URL('../data/sources/', import.meta.url), { recursive: true });
+  await writeFile(new URL(`../data/sources/${name}.json`, import.meta.url), JSON.stringify(items, null, 1));
+  console.log(name, items.length);
+}
