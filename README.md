@@ -29,8 +29,11 @@ npm run crawl                  # refresh data/items.json (OpenGameArt is slow on
 - Static (Pages): `api/items.json`, `api/creators.json`, `api/meta.json`, `api/source/*.json`, `api/license/{cc0,cc-by}.json`, `api/format/*.json`
 - Server: `GET /api/search?q=&format=&license=&style=&kind=&source=&creator=&limit=&offset=` · `GET /api/creators` · `POST /api/track` · `GET /api/stats`
 
-## Tracking (limits)
-GitHub Pages is static, so per-creator **views and outbound clicks are counted in each visitor's localStorage**, which means there are no global totals there. Set `trackEndpoint` in `web/config.json` to point to a server's `/api/track` (the Docker server keeps counts in memory and appends events to `STATS_FILE`) to aggregate them.
+## Tracking
+Views of creator pages and outbound clicks are sent anonymously, with no IPs or personal data, to a free-tier Supabase project (`supabase/tracking_v1.sql`). That project exposes an insert-only RPC with validation and rate limits, plus a `creator_stats` RPC for global totals. Counts are also kept in localStorage. If Supabase is down, the site keeps working and the Creators page falls back to this browser's counts. The key in `web/config.json` is Supabase's *publishable* key, which is safe to make public. Set `trackEndpoint` to `/api/track` to use the Docker server instead.
+
+## Refreshing OpenGameArt (resumable)
+`OGA_PAGES=3 OGA_PER_COMBO=48 node scripts/crawl.mjs opengameart` waits 10 seconds between requests, skips items already in `data/items.json` and saves every 10 items, so it's safe to stop and rerun. Then run `npm run build` and push `dist/` to `gh-pages`.
 
 ## Deploy
 `npm run build` writes `dist/`, which is pushed to the `gh-pages` branch.

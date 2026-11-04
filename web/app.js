@@ -1,5 +1,5 @@
 import { search, creatorStats } from './lib.mjs';
-import { track, localStats } from './track.js';
+import { track, localStats, globalStats } from './track.js';
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const FIELDS = ['q', 'kind', 'style', 'format', 'license', 'source'];
@@ -14,12 +14,12 @@ function card(i) {
   <details><summary>Credit line</summary><textarea readonly>${esc(i.attribution)}</textarea><button data-copy>Copy</button></details></article>`;
 }
 
-function render() {
+async function render() {
   const h = location.hash;
   if (h === '#/creators') {
-    const st = localStats();
     $('#filters').hidden = true;
-    $('#main').innerHTML = `<h2>Creators</h2><p class="note">Views/clicks are counted in this browser only (see API page).</p><table><tr><th>Creator</th><th>Assets</th><th>Sources</th><th>Views</th><th>Clicks</th></tr>${creatorStats(items).map(c => `<tr><td><a href="#/creator/${esc(c.slug)}">${esc(c.name)}</a></td><td>${c.count}</td><td>${esc(c.sources.join(', '))}</td><td>${st[c.slug]?.views || 0}</td><td>${st[c.slug]?.clicks || 0}</td></tr>`).join('')}</table>`;
+    const g = await globalStats(); const st = g || localStats();
+    $('#main').innerHTML = `<h2>Creators</h2><p class="note">${g ? 'Views/clicks across all visitors (anonymous, no personal data).' : 'Global stats unavailable; showing counts from this browser only.'}</p><table><tr><th>Creator</th><th>Assets</th><th>Sources</th><th>Views</th><th>Clicks</th></tr>${creatorStats(items).map(c => `<tr><td><a href="#/creator/${esc(c.slug)}">${esc(c.name)}</a></td><td>${c.count}</td><td>${esc(c.sources.join(', '))}</td><td>${st[c.slug]?.views || 0}</td><td>${st[c.slug]?.clicks || 0}</td></tr>`).join('')}</table>`;
     return;
   }
   const m = h.match(/^#\/creator\/(.+)$/);
