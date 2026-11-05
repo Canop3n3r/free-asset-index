@@ -5,7 +5,7 @@ export const LICENSES = {
   'CC-BY 4.0': { name: 'Creative Commons Attribution 4.0', url: 'https://creativecommons.org/licenses/by/4.0/', requiresAttribution: true },
   'Public Domain': { name: 'Public Domain (e.g. US government works such as NASA)', url: 'https://creativecommons.org/publicdomain/mark/1.0/', requiresAttribution: false },
 };
-export const FORMATS = ['GLB', 'GLTF', 'FBX', 'OBJ', 'BLEND', 'PNG', 'JPG', 'EXR', 'HDR'];
+export const FORMATS = ['GLB', 'GLTF', 'FBX', 'OBJ', 'BLEND', 'PNG', 'JPG', 'EXR', 'HDR', 'SVG'];
 
 export function slugify(s) {
   return String(s).normalize('NFKD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
