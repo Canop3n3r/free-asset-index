@@ -28,7 +28,7 @@ const count = k => items.reduce((m, i) => (m[i[k]] = (m[i[k]] || 0) + 1, m), {})
 await w('api/meta.json', { total: items.length, bySource: count('source'), byLicense: count('license'), builtAt: new Date().toISOString(), note: 'Link-only index. Check the license on each source page.' });
 for (const s of [...new Set(items.map(i => i.source))]) await w(`api/source/${s}.json`, items.filter(i => i.source === s));
 for (const l of ['CC0', 'CC-BY']) await w(`api/license/${l.toLowerCase()}.json`, items.filter(i => i.license.startsWith(l)));
-for (const f of ['GLB', 'GLTF', 'FBX', 'OBJ', 'BLEND', 'PNG', 'HDR']) await w(`api/format/${f.toLowerCase()}.json`, items.filter(i => i.formats.includes(f) || (f === 'GLB' && i.formats.includes('GLTF'))));
+for (const f of ['GLB', 'GLTF', 'FBX', 'OBJ', 'BLEND', 'PNG', 'HDR', 'SVG']) await w(`api/format/${f.toLowerCase()}.json`, items.filter(i => i.formats.includes(f) || (f === 'GLB' && i.formats.includes('GLTF'))));
 const bundles = buildBundles(items);
 await w('api/bundles.json', bundleIndex(bundles));
 for (const b of bundles) { await w(`api/bundles/${b.slug}.json`, b); for (const e of ENGINES) await w(`api/bundles/${b.slug}.${e}.json`, engineManifest(b, e)); }
