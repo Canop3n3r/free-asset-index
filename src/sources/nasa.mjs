@@ -12,7 +12,7 @@ export function mapNasa(entry) {
   const enc = encodeURIComponent(id);
   const orig = links.find(l => l.rel === 'canonical');
   return {
-    source: 'nasa', sourceId: id, title: d.title || id,
+    source: 'nasa', sourceId: id, title: String(d.title || '').trim() || id,
     creator: d.photographer && !/nasa/i.test(d.photographer) ? `NASA/${d.photographer}` : (d.center ? `NASA ${d.center}` : 'NASA'),
     creatorUrl: 'https://images.nasa.gov/', license: 'Public Domain', url: `https://images.nasa.gov/details/${enc}`,
     thumbnail: by('thumb') || by('small') || null, image: by('medium') || by('large') || null, kind: '2d', style: 'realistic',
