@@ -520560,7 +520560,7 @@
  {
   "id": "nasa:GSFC_20260805_DS_000914 (1)",
   "source": "nasa",
-  "title": "",
+  "title": "GSFC_20260805_DS_000914 (1)",
   "creator": "NASA/Mike Guinto",
   "creatorSlug": "nasa-mike-guinto",
   "creatorUrl": "https://images.nasa.gov/",
@@ -520583,7 +520583,7 @@
   "fileSize": 16777216,
   "triangles": null,
   "textureRes": 4954,
-  "attribution": "\"\" by NASA/Mike Guinto (https://images.nasa.gov/details/GSFC_20260805_DS_000914%20(1)), licensed under Public Domain (https://creativecommons.org/publicdomain/mark/1.0/)."
+  "attribution": "\"GSFC_20260805_DS_000914 (1)\" by NASA/Mike Guinto (https://images.nasa.gov/details/GSFC_20260805_DS_000914%20(1)), licensed under Public Domain (https://creativecommons.org/publicdomain/mark/1.0/)."
  },
  {
   "id": "nasa:ARC-1992-AC92-0323-138",

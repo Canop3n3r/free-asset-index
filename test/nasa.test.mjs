@@ -18,3 +18,7 @@ test('skips third-party credited images', () => {
   assert.equal(mapNasa(e({ description: 'Photo © 2020 Someone' })), null);
   assert.equal(mapNasa({ data: [{ media_type: 'video', nasa_id: 'v' }] }), null);
 });
+test('blank title falls back to nasa_id', () => {
+  const d = { data: [{ media_type: 'image', nasa_id: 'x1', title: '  ' }], links: [] };
+  assert.equal(mapNasa(d).title, 'x1');
+});
