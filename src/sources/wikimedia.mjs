@@ -6,6 +6,9 @@ export const WM_QUERIES = [
   ['pixel art', '2d'], ['sprite sheet', '2d'], ['game icon', '2d'], ['tileset', '2d'],
   ['equirectangular panorama', 'hdri'], ['sky panorama 360', 'hdri'],
   ['sound effect', 'audio', 'filetype:audio'], ['ambience', 'audio', 'filetype:audio'], ['music loop', 'audio', 'filetype:audio'],
+  ['seamless pattern', 'texture'], ['stone texture', 'texture'], ['wood texture', 'texture'], ['metal texture', 'texture'], ['fabric texture', 'texture'], ['brick wall texture', 'texture'],
+  ['game sprite', '2d'], ['icon set', '2d'], ['clip art', '2d'], ['360 panorama', 'hdri'],
+  ['field recording', 'audio', 'filetype:audio'], ['nature sounds', 'audio', 'filetype:audio'],
 ];
 export function mapWikimedia(p, kind = '2d') {
   const ii = p.imageinfo?.[0]; const md = ii?.extmetadata || {};
