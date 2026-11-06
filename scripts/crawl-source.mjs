@@ -15,10 +15,11 @@ import { crawlCleveland } from '../src/sources/cleveland-museum.mjs';
 import { crawlGameIcons } from '../src/sources/game-icons.mjs';
 import { crawlArtic } from '../src/sources/artic.mjs';
 import { crawlShareTextures } from '../src/sources/sharetextures.mjs';
+import { crawlCgBookcase } from '../src/sources/cgbookcase.mjs';
 const UA = 'free-asset-index/0.1 (+https://github.com/Canop3n3r/free-asset-index; link-only index)';
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const get = async (url, json) => { const r = await fetch(url, { headers: { 'User-Agent': UA } }); if (!r.ok) throw new Error(`${r.status} ${url}`); return json ? r.json() : r.text(); };
-const SOURCES = { ambientcg: crawlAmbientCG, quaternius: crawlQuaternius, polyhaven: crawlPolyHaven, freesound: crawlFreesound, smithsonian: crawlSmithsonian, sketchfab: crawlSketchfab, wikimedia: crawlWikimedia, nasa: crawlNasa, 'smithsonian-images': crawlSmithsonianImages, 'cleveland-museum': crawlCleveland, 'game-icons': crawlGameIcons, artic: crawlArtic, sharetextures: crawlShareTextures };
+const SOURCES = { ambientcg: crawlAmbientCG, quaternius: crawlQuaternius, polyhaven: crawlPolyHaven, freesound: crawlFreesound, smithsonian: crawlSmithsonian, sketchfab: crawlSketchfab, wikimedia: crawlWikimedia, nasa: crawlNasa, 'smithsonian-images': crawlSmithsonianImages, 'cleveland-museum': crawlCleveland, 'game-icons': crawlGameIcons, artic: crawlArtic, sharetextures: crawlShareTextures, cgbookcase: crawlCgBookcase };
 // API keys are read from files at crawl time only (never committed, logged, or written to output).
 const KEYS = { freesound: 'FREESOUND_API_KEY', smithsonian: 'DATA_GOV_API_KEY', 'smithsonian-images': 'DATA_GOV_API_KEY', sketchfab: 'SKETCHFAB_API_TOKEN' };
 const SECRETS = process.env.SECRETS_DIR || '/home/box/secrets';
