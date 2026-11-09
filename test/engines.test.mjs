@@ -24,4 +24,7 @@ test('openapi.json and llms.txt exist and describe search + bundles', () => {
   for (const p of ['/api/search', '/api/bundles', '/api/bundles/{slug}']) assert.ok(o.paths[p], p);
   const l = readFileSync(new URL('../web/llms.txt', import.meta.url), 'utf8');
   assert.match(l, /^# Free Asset Index/); assert.match(l, /search-index\.json/); assert.match(l, /license/i);
+  assert.match(l, /manifest/i);
+  assert.ok(o.paths['/api/items.json']);
+  assert.match(o.paths['/api/items.json'].get.summary, /manifest/i);
 });

@@ -5,7 +5,7 @@ A searchable index of **free 3D and 2D game assets** with clear licenses (CC0 / 
 **Index and link only.** We never rehost files. Every result links to the creator's own page, so creators keep ownership and get the traffic.
 
 - Live site: https://canop3n3r.github.io/free-asset-index/
-- Static API: https://canop3n3r.github.io/free-asset-index/api/items.json ([API docs](https://canop3n3r.github.io/free-asset-index/api.html))
+- Static API: https://canop3n3r.github.io/free-asset-index/api/search-index.json · shards at `api/source/*.json` · manifest at [api/items.json](https://canop3n3r.github.io/free-asset-index/api/items.json) ([API docs](https://canop3n3r.github.io/free-asset-index/api.html))
 
 ## Sources (v1)
 | Source | How we index it | License |
@@ -30,7 +30,7 @@ npm run crawl                  # refresh data/items.json (OpenGameArt is slow on
 ```
 
 ## API
-- Static (Pages): `api/items.json`, `api/creators.json`, `api/meta.json`, `api/source/*.json`, `api/license/{cc0,cc-by}.json`, `api/format/*.json`
+- Static (Pages): `api/items.json` (manifest only), `api/search-index.json`, `api/creators.json`, `api/meta.json`, `api/source/*.json` (full records), `api/license/{cc0,cc-by}.json`, `api/format/*.json`. No single published JSON file may exceed 85 MB.
 - Server: `GET /api/search?q=&format=&license=&style=&kind=&source=&creator=&limit=&offset=` · `GET /api/creators` · `POST /api/track` · `GET /api/stats`
 
 ## Tracking

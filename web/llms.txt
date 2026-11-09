@@ -6,7 +6,8 @@ Base URL: https://canop3n3r.github.io/free-asset-index/
 
 ## Static JSON (no key, CORS-friendly via GitHub Pages)
 - [api/search-index.json](https://canop3n3r.github.io/free-asset-index/api/search-index.json): compact index of all assets. Filter it client-side by title/tags/categories/styles/formats/license.
-- [api/items.json](https://canop3n3r.github.io/free-asset-index/api/items.json): full records, including the `attribution` string
+- [api/items.json](https://canop3n3r.github.io/free-asset-index/api/items.json): small manifest listing `api/source/{name}.json` shards (not a full dump)
+- `api/source/{name}.json`: full records for one source, including the `attribution` string
 - [api/meta.json](https://canop3n3r.github.io/free-asset-index/api/meta.json): counts per source and license
 - [api/bundles.json](https://canop3n3r.github.io/free-asset-index/api/bundles.json): curated bundles. Each one is at `api/bundles/{slug}.json`, with engine manifests at `api/bundles/{slug}.{godot|unity|threejs}.json` (target paths, preferred format, import hints)
 - `api/source/{source}.json`, `api/license/{cc0|cc-by}.json`, `api/format/{glb|fbx|obj|png|hdr|...}.json`
