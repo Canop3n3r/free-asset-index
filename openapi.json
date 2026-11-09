@@ -175,16 +175,55 @@
   },
   "/api/items.json": {
    "get": {
-    "summary": "All assets",
+    "summary": "Items manifest (not a full dump)",
+    "description": "Small JSON pointer listing per-source shards under api/source/{name}.json. Use api/search-index.json for the slim browser index, or fetch individual source shards for full records.",
     "responses": {
      "200": {
-      "description": "Array of items",
+      "description": "Items manifest",
       "content": {
        "application/json": {
         "schema": {
-         "type": "array",
-         "items": {
-          "$ref": "#/components/schemas/Item"
+         "type": "object",
+         "required": [
+          "schema",
+          "total",
+          "shards"
+         ],
+         "properties": {
+          "schema": {
+           "type": "string",
+           "example": "free-asset-index/items-manifest/v1"
+          },
+          "total": {
+           "type": "integer"
+          },
+          "note": {
+           "type": "string"
+          },
+          "searchIndex": {
+           "type": "string"
+          },
+          "meta": {
+           "type": "string"
+          },
+          "shards": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "source": {
+              "type": "string"
+             },
+             "path": {
+              "type": "string",
+              "example": "source/polyhaven.json"
+             },
+             "count": {
+              "type": "integer"
+             }
+            }
+           }
+          }
          }
         }
        }
@@ -232,6 +271,36 @@
     "responses": {
      "200": {
       "description": "Creators"
+     }
+    }
+   }
+  },
+  "/api/source/{name}.json": {
+   "get": {
+    "summary": "Full records for one source",
+    "parameters": [
+     {
+      "name": "name",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Array of items",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Item"
+         }
+        }
+       }
+      }
      }
     }
    }
