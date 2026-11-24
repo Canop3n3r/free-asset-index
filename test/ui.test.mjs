@@ -15,7 +15,7 @@ test('slimItem keeps fields cards and credits need, drops nothing license-relate
   for (const k of ['id', 'title', 'creator', 'license', 'licenseUrl', 'url', 'thumbnail', 'image', 'formats', 'quality']) assert.ok(k in s, k);
   assert.ok(s.tags.length <= 8);
 });
-test('Source dropdown values match every source in the index data', () => {
+test('Source dropdown includes every index source and Wellcome Collection after NGA', () => {
   const html = readFileSync(new URL('../web/index.html', import.meta.url), 'utf8');
   const select = html.match(/<select id="source"[^>]*>([\s\S]*?)<\/select>/)[1];
   const options = [...select.matchAll(/<option value="([^"]*)">/g)].map(m => m[1]).filter(Boolean);
@@ -23,6 +23,6 @@ test('Source dropdown values match every source in the index data', () => {
   for (const f of readdirSync(new URL('../data/sources/', import.meta.url)).filter(f => f.endsWith('.json'))) {
     sources.add(f.slice(0, -5));
   }
-  assert.deepEqual([...options].sort(), [...sources].sort());
-  assert.match(select, /<option value="nga">National Gallery of Art<\/option>/);
+  for (const s of sources) assert.ok(options.includes(s), `missing Source option for ${s}`);
+  assert.match(select, /<option value="nga">National Gallery of Art<\/option><option value="wellcome">Wellcome Collection<\/option>/);
 });
