@@ -176,7 +176,7 @@
   "/api/items.json": {
    "get": {
     "summary": "Items manifest (not a full dump)",
-    "description": "Small JSON pointer listing per-source shards under api/source/{name}.json. Use api/search-index.json for the slim browser index, or fetch individual source shards for full records.",
+    "description": "Small JSON pointer listing per-source full-record shards under api/source/{name}.json. The slim browser index is also a manifest: api/search-index.json lists shards at api/search-index/{source}.json.",
     "responses": {
      "200": {
       "description": "Items manifest",
@@ -224,6 +224,96 @@
             }
            }
           }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/search-index.json": {
+   "get": {
+    "summary": "Slim search-index manifest (not a full dump)",
+    "description": "Small JSON pointer listing slim per-source shards under api/search-index/{source}.json (or api/search-index/{source}-N.json if a source is split). This file is not an item array. Each shard entry includes source, path, count, bytes, and sha256.",
+    "responses": {
+     "200": {
+      "description": "Search-index manifest",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "object",
+         "required": [
+          "schema",
+          "total",
+          "shards"
+         ],
+         "properties": {
+          "schema": {
+           "type": "string",
+           "example": "free-asset-index/search-index-manifest/v1"
+          },
+          "total": {
+           "type": "integer"
+          },
+          "note": {
+           "type": "string"
+          },
+          "shards": {
+           "type": "array",
+           "items": {
+            "type": "object",
+            "properties": {
+             "source": {
+              "type": "string"
+             },
+             "path": {
+              "type": "string",
+              "example": "search-index/polyhaven.json"
+             },
+             "count": {
+              "type": "integer"
+             },
+             "bytes": {
+              "type": "integer"
+             },
+             "sha256": {
+              "type": "string"
+             }
+            }
+           }
+          }
+         }
+        }
+       }
+      }
+     }
+    }
+   }
+  },
+  "/api/search-index/{name}.json": {
+   "get": {
+    "summary": "One slim search-index shard",
+    "description": "Slim records for one source (or one part of a split source). An array of compact items for client-side search.",
+    "parameters": [
+     {
+      "name": "name",
+      "in": "path",
+      "required": true,
+      "schema": {
+       "type": "string"
+      }
+     }
+    ],
+    "responses": {
+     "200": {
+      "description": "Slim items",
+      "content": {
+       "application/json": {
+        "schema": {
+         "type": "array",
+         "items": {
+          "$ref": "#/components/schemas/Item"
          }
         }
        }

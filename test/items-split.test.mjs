@@ -20,7 +20,9 @@ test('docs describe items.json as a manifest, not a full array dump', () => {
   const apiHtml = readFileSync(new URL('../web/api.html', import.meta.url), 'utf8');
   assert.match(apiHtml, /manifest/i);
   assert.match(apiHtml, /search-index\.json/);
+  assert.match(apiHtml, /search-index\/(?:&lt;source&gt;|<source>)/);
   const readme = readFileSync(new URL('../README.md', import.meta.url), 'utf8');
+  assert.match(readme, /search-index\/<source>/);
   assert.match(readme, /manifest only/);
   assert.match(readme, /85 MB/);
 });
@@ -54,8 +56,22 @@ test('published dist has items manifest + shards, not a giant items array', () =
     assert.ok(items.shards.some(s => s.source === name), `manifest missing source ${name}`);
   }
   const si = JSON.parse(readFileSync(new URL('search-index.json', distApi)));
-  assert.ok(Array.isArray(si));
-  assert.equal(si.length, items.total);
+  assert.ok(!Array.isArray(si), 'api/search-index.json must not be an item array');
+  assert.equal(si.schema, 'free-asset-index/search-index-manifest/v1');
+  assert.equal(si.total, items.total);
+  assert.ok(Array.isArray(si.shards) && si.shards.length > 0);
+  let siCount = 0;
+  for (const s of si.shards) {
+    assert.ok(s.source && s.path && typeof s.count === 'number' && typeof s.bytes === 'number' && s.sha256);
+    const shardFile = new URL(s.path, distApi);
+    assert.ok(existsSync(shardFile), `missing shard ${s.path}`);
+    const arr = JSON.parse(readFileSync(shardFile));
+    assert.ok(Array.isArray(arr));
+    assert.equal(arr.length, s.count);
+    assert.equal(statSync(shardFile).size, s.bytes);
+    siCount += s.count;
+  }
+  assert.equal(siCount, items.total);
   // Soft guard: no published JSON over 85 MB (and items.json itself must stay tiny).
   assert.ok(statSync(new URL('items.json', distApi)).size < 256 * 1024, 'manifest should be small');
   function walk(dir, rel = '') {
