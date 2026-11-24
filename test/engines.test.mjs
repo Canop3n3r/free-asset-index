@@ -27,4 +27,8 @@ test('openapi.json and llms.txt exist and describe search + bundles', () => {
   assert.match(l, /manifest/i);
   assert.ok(o.paths['/api/items.json']);
   assert.match(o.paths['/api/items.json'].get.summary, /manifest/i);
+  assert.ok(o.paths['/api/search-index.json']);
+  assert.match(o.paths['/api/search-index.json'].get.summary, /manifest/i);
+  assert.equal(o.paths['/api/search-index.json'].get.responses['200'].content['application/json'].schema.type, 'object');
+  assert.ok(o.paths['/api/search-index/{name}.json']);
 });

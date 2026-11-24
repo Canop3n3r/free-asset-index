@@ -5,7 +5,7 @@ A searchable index of **free 3D and 2D game assets** with clear licenses (CC0 / 
 **Index and link only.** We never rehost files. Every result links to the creator's own page, so creators keep ownership and get the traffic.
 
 - Live site: https://canop3n3r.github.io/free-asset-index/
-- Static API: https://canop3n3r.github.io/free-asset-index/api/search-index.json · shards at `api/source/*.json` · manifest at [api/items.json](https://canop3n3r.github.io/free-asset-index/api/items.json) ([API docs](https://canop3n3r.github.io/free-asset-index/api.html))
+- Static API: slim index manifest at [api/search-index.json](https://canop3n3r.github.io/free-asset-index/api/search-index.json) · shards at `api/search-index/<source>.json` · full records at `api/source/*.json` · items manifest at [api/items.json](https://canop3n3r.github.io/free-asset-index/api/items.json) ([API docs](https://canop3n3r.github.io/free-asset-index/api.html))
 
 ## Sources (v1)
 | Source | How we index it | License |
@@ -30,7 +30,7 @@ npm run crawl                  # refresh data/items.json (OpenGameArt is slow on
 ```
 
 ## API
-- Static (Pages): `api/items.json` (manifest only), `api/search-index.json`, `api/creators.json`, `api/meta.json`, `api/source/*.json` (full records), `api/license/{cc0,cc-by}.json`, `api/format/*.json`. No single published JSON file may exceed 85 MB.
+- Static (Pages): `api/items.json` (full-record manifest only), `api/search-index.json` (slim-index manifest only; shards at `api/search-index/<source>.json`), `api/creators.json`, `api/meta.json`, `api/source/*.json` (full records), `api/license/{cc0,cc-by}.json`, `api/format/*.json`. No single published JSON file may exceed 85 MB. After a crawl, run `npm run build` (or `scripts/deploy-pages.sh`) — the build fails if any file, including a search-index shard, is over the cap. A source that would overflow is split further into `api/search-index/<source>-0.json`, `<source>-1.json`, and so on. `api/license/cc0.json` is still a convenience dump of full CC0 records; it is not sharded. Prefer `api/source/*.json` (filter by `license`) if that file grows near the cap.
 - Server: `GET /api/search?q=&format=&license=&style=&kind=&source=&creator=&limit=&offset=` · `GET /api/creators` · `POST /api/track` · `GET /api/stats`
 
 ## Tracking
@@ -50,7 +50,7 @@ Views of creator pages and outbound clicks are sent anonymously, with no IPs or 
 ## For AI agents and engines
 - `llms.txt` and `openapi.json` are published at the site root.
 - Engine manifests: `api/bundles/{slug}.{godot|unity|threejs}.json` give the target path, preferred format, import hint and three.js loader for each asset. Download stays manual, from the source page.
-- `api/search-index.json` is a compact index for fast client-side search. `sort=quality` orders results by the 0-100 `quality` score.
+- `api/search-index.json` is a small manifest listing slim per-source shards at `api/search-index/<source>.json` (it is not an item array). Fetch the manifest, then the shards you need. `sort=quality` orders results by the 0-100 `quality` score.
 
 ## Roadmap / sources needing keys
 - Sketchfab (API token required for its search API; CC filters available), Freesound (API key required), Smithsonian Open Access (api.data.gov key), NASA 3D Resources (GitHub repo, no key; check per-model usage terms), itch.io (no public asset API; robots disallows /search).

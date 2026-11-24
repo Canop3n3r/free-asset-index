@@ -1,4 +1,5 @@
 import { search, creatorStats, attribution } from './lib.mjs';
+import { loadNeededItems } from './load-search-index.mjs';
 import { track, localStats, globalStats } from './track.js';
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -68,7 +69,19 @@ async function render() {
 }
 function fullResults(p) { const out = []; let off = 0, r; do { r = search(items, { ...p, limit: 200, offset: off }); out.push(...r.results); off += 200; } while (off < r.total); return out; }
 
-let t; const rerender = () => { clearTimeout(t); t = setTimeout(() => { shown = PAGE; render(); }, 120); };
+const loadedShards = new Map();
+const index = {};
+async function ensureItems() {
+  const h = location.hash;
+  const needAll = h === '#/creators' || h.startsWith('#/creator/');
+  const source = needAll ? '' : ($('#source')?.value || '');
+  items = await loadNeededItems(fetch, { manifestUrl: 'api/search-index.json', source, loaded: loadedShards, index });
+  byId = new Map(items.map(i => [i.id, i]));
+  const total = index.manifest?.total ?? items.length;
+  $('#count').textContent = `${Number(total).toLocaleString()} assets indexed.`;
+}
+
+let t; const rerender = () => { clearTimeout(t); t = setTimeout(async () => { shown = PAGE; await ensureItems(); render(); }, 120); };
 document.addEventListener('click', e => {
   const out = e.target.closest('a[data-out]'); if (out) track('click', out.dataset.out, out.dataset.id);
   if (e.target.matches('[data-copy]')) { const ta = e.target.previousElementSibling; ta.select(); navigator.clipboard?.writeText(ta.value); e.target.textContent = 'Copied'; }
@@ -79,9 +92,7 @@ document.addEventListener('click', e => {
 });
 document.addEventListener('keydown', e => { if (e.key === 'Enter' && e.target.dataset?.qv) quickView(byId.get(e.target.dataset.qv)); });
 for (const f of FIELDS) $('#' + f).addEventListener('input', rerender);
-addEventListener('hashchange', () => { shown = PAGE; render(); });
+addEventListener('hashchange', async () => { shown = PAGE; await ensureItems(); render(); });
 const qs = new URLSearchParams(location.search); for (const f of FIELDS) if (qs.has(f)) $('#' + f).value = qs.get(f);
-items = await (await fetch('api/search-index.json')).json();
-byId = new Map(items.map(i => [i.id, i]));
-$('#count').textContent = `${items.length.toLocaleString()} assets indexed.`;
+await ensureItems();
 render();

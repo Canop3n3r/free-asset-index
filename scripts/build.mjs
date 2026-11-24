@@ -2,7 +2,7 @@
 import { readFile, writeFile, mkdir, cp, rm, readdir, stat } from 'node:fs/promises';
 import { join } from 'node:path';
 import { previewFor } from '../src/previews.mjs';
-import { slimItem } from '../src/slim.mjs';
+import { buildSearchIndex } from '../src/search-index.mjs';
 import { engineManifest, ENGINES } from '../src/engines.mjs';
 import { CATEGORIES } from '../src/classify.mjs';
 import { creatorStats } from '../src/lib.mjs';
@@ -38,13 +38,15 @@ for (const s of sources) {
 await w('api/items.json', {
   schema: 'free-asset-index/items-manifest/v1',
   total: items.length,
-  note: 'Full records are sharded by source under api/source/<name>.json. Use api/search-index.json for the browser index. This file is a small manifest, not an item array.',
+  note: 'Full records are sharded by source under api/source/<name>.json. The slim browser index is a manifest at api/search-index.json plus shards under api/search-index/<source>.json. This file is a small manifest, not an item array.',
   searchIndex: 'search-index.json',
   meta: 'meta.json',
   shards,
 });
 
-await w('api/search-index.json', items.map(slimItem));
+const { manifest: searchIndex, files: searchIndexFiles } = buildSearchIndex(items);
+await w('api/search-index.json', searchIndex);
+for (const [path, part] of Object.entries(searchIndexFiles)) await w(`api/${path}`, part);
 await w('api/creators.json', creatorStats(items));
 const count = k => items.reduce((m, i) => (m[i[k]] = (m[i[k]] || 0) + 1, m), {});
 await w('api/meta.json', { total: items.length, bySource: count('source'), byLicense: count('license'), builtAt: new Date().toISOString(), note: 'Link-only index. Check the license on each source page.' });
